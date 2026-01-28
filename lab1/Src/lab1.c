@@ -1,6 +1,8 @@
 #include "main.h"
 #include "stm32f0xx_hal.h"
 
+// Test comment to check commit
+
 void SystemClock_Config(void);
 
 /**
