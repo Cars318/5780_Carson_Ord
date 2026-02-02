@@ -1,5 +1,6 @@
 #include "main.h"
 #include "stm32f0xx_hal.h"
+#include "assert.h"
 
 // Test comment to check commit
 
@@ -22,13 +23,19 @@ GPIO_InitTypeDef initStr = {GPIO_PIN_8 | GPIO_PIN_9,
                             GPIO_MODE_OUTPUT_PP,
                             GPIO_SPEED_FREQ_LOW,
                             GPIO_NOPULL};
-HAL_GPIO_Init(GPIOC, &initStr);
+//HAL_GPIO_Init(GPIOC, &initStr);
+
+My_HAL_GPIO_Init(GPIOC);
+My_HAL_GPIO_Init(GPIOA);
+
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
+
 
   while (1)
   {
       HAL_Delay(200);
       HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_8 | GPIO_PIN_9);
+      //assert(GPIOA->MODER == 0x123456);
   }
   return -1;
 }
@@ -91,6 +98,10 @@ void Error_Handler(void)
   */
 void assert_failed(uint8_t *file, uint32_t line)
 {
+  while (1) 
+  {
+
+  }
   /* User can add their own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
 }
