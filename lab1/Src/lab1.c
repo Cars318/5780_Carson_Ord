@@ -19,19 +19,17 @@ int main(void)
 
 HAL_RCC_GPIOC_CLK_ENABLE(); 
 assert(RCC->AHBENR & RCC_AHBENR_GPIOCEN);
-
-//__HAL_RCC_GPIOC_CLK_ENABLE();
-//assert(RCC->AHBENR & RCC_AHBENR_GPIOCEN); // Assert the Peripheral Clock Enable Register
-
+/*
 GPIO_InitTypeDef initStr = {GPIO_PIN_8 | GPIO_PIN_9,
                             GPIO_MODE_OUTPUT_PP,
                             GPIO_SPEED_FREQ_LOW,
                             GPIO_NOPULL};
 HAL_GPIO_Init(GPIOC, &initStr);
 assert((GPIOC->MODER & (0xF << 16)) == (0x5 << 16)); // Assert GPIO Pin 8 and Pin 9
-
-//My_HAL_GPIO_Init(GPIOC);
-//My_HAL_GPIO_Init(GPIOA);
+*/
+                       
+My_HAL_GPIO_Init(GPIOC);
+My_HAL_GPIO_Init(GPIOA);
 
 HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
 assert((GPIOC->ODR & (1 << 8))); // Assert Output State
