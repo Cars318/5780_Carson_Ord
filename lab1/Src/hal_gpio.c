@@ -1,7 +1,6 @@
 #include <stdint.h>
 #include <stm32f0xx_hal.h>
 #include <stm32f0xx_hal_gpio.h>
-#include <stdio.h>
 
 /*
 PC6 (RED LED) - General Purpose Output: (GPIOC, Pin6), 13 -> 0, 12 ->1
@@ -26,7 +25,7 @@ PA0 (USER BUTTON) - Digital Input: (GPIOa, Pin0), 1 -> 0, 0 -> 0
 */
 
 
-void My_HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
+void My_HAL_GPIO_Init(GPIO_TypeDef  *GPIOx)
 {
     if (GPIOx == GPIOA) 
     {
@@ -75,12 +74,12 @@ void My_HAL_GPIO_DeInit(GPIO_TypeDef  *GPIOx, uint32_t GPIO_Pin)
 }
 */
 
-/*
+
 GPIO_PinState My_HAL_GPIO_ReadPin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
-{
-    return -1;
+{   
+    return (GPIOx->IDR & GPIO_Pin);
 }
-*/
+
 
 void My_HAL_GPIO_WritePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState)
 {

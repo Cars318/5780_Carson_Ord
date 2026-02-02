@@ -13,22 +13,32 @@ int main(void)
   HAL_Init();
   SystemClock_Config();
 
+  HAL_RCC_GPIOA_CLK_ENABLE();
   HAL_RCC_GPIOC_CLK_ENABLE(); 
-  assert(RCC->AHBENR & RCC_AHBENR_GPIOCEN);
+  
+  //assert(RCC->AHBENR & RCC_AHBENR_GPIOCEN);
+
 
   My_HAL_GPIO_Init(GPIOC);
   My_HAL_GPIO_Init(GPIOA);
-  assert((GPIOC->MODER & (0xF << 16)) == (0x5 << 16)); // Assert GPIO Pin 8 and Pin 9                 
+  //assert((GPIOC->MODER & (0xF << 12)) == (0x5 <<12)); // Assert GPIO Pin 8 and Pin 9                 
 
-  My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
-  My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9);
-  assert((GPIOC->ODR & (1 << 8))); // Assert Output State
+  My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);
+  My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7);
+  //assert((GPIOC->ODR & (1 << 6))); // Assert Output State
 
+  uint32_t debouncer = 0;
   while (1)
   {
-      HAL_Delay(200);
-      My_HAL_GPIO_TogglePin(GPIOC,  GPIO_PIN_8 | GPIO_PIN_9);
-      //assert(GPIOC->MODER == 0x123456);
+    debouncer = (debouncer << 1);
+    if (My_HAL_GPIO_ReadPin(GPIOA, GPIO_PIN_0) == GPIO_PIN_SET) {
+      debouncer |= 0x01;
+      
+    }
+    if (debouncer == 0x7FFFFFFF) {
+      My_HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6 | GPIO_PIN_7);
+    }
+    HAL_Delay(1); 
   }
   return -1;
 }
@@ -87,6 +97,14 @@ void Error_Handler(void)
 void HAL_RCC_GPIOC_CLK_ENABLE() 
 {
     RCC->AHBENR |= RCC_AHBENR_GPIOCEN; 
+}
+
+/**
+* @brief Enable AHB peripheral clock register on GPIOA
+*/
+void HAL_RCC_GPIOA_CLK_ENABLE() 
+{
+    RCC->AHBENR |= RCC_AHBENR_GPIOAEN; 
 }
 
 
