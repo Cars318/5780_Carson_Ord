@@ -1,6 +1,7 @@
 #include "main.h"
 #include "stm32f0xx_hal.h"
 #include "assert.h"
+#include "hal_gpio.h"
 
 void SystemClock_Config(void);
 
@@ -15,17 +16,43 @@ int main(void)
 
   HAL_RCC_GPIOA_CLK_ENABLE();
   HAL_RCC_GPIOC_CLK_ENABLE(); 
-  
-  //assert(RCC->AHBENR & RCC_AHBENR_GPIOCEN);
+  assert(RCC->AHBENR & RCC_AHBENR_GPIOCEN); // Assert GPIOC Enable
+  assert(RCC->AHBENR & RCC_AHBENR_GPIOAEN); // Assert GPIOA Enable
 
+  // Initialize the GPIO Registers
+  GPIO_InitTypeDef initPA0 = {GPIO_PIN_0,
+                              GPIO_MODE_INPUT,
+                              GPIO_PULLDOWN,
+                              GPIO_SPEED_FREQ_LOW,}; 
+  GPIO_InitTypeDef initPC6 = {GPIO_PIN_6,
+                              GPIO_MODE_OUTPUT_PP,
+                              GPIO_NOPULL,
+                              GPIO_SPEED_FREQ_LOW,};
+  GPIO_InitTypeDef initPC7 = {GPIO_PIN_7,
+                              GPIO_MODE_OUTPUT_PP,
+                              GPIO_NOPULL,
+                              GPIO_SPEED_FREQ_LOW,};
+  GPIO_InitTypeDef initPC8 = {GPIO_PIN_8,
+                              GPIO_MODE_OUTPUT_PP,
+                              GPIO_NOPULL,
+                              GPIO_SPEED_FREQ_LOW,};
+  GPIO_InitTypeDef initPC9 = {GPIO_PIN_9,
+                              GPIO_MODE_OUTPUT_PP,
+                              GPIO_NOPULL,
+                              GPIO_SPEED_FREQ_LOW,};
 
-  My_HAL_GPIO_Init(GPIOC);
-  My_HAL_GPIO_Init(GPIOA);
-  //assert((GPIOC->MODER & (0xF << 12)) == (0x5 <<12)); // Assert GPIO Pin 8 and Pin 9                 
+  My_HAL_GPIO_Init(GPIOA, &initPA0);
+  My_HAL_GPIO_Init(GPIOC, &initPC6);
+  My_HAL_GPIO_Init(GPIOC, &initPC7);
+  My_HAL_GPIO_Init(GPIOC, &initPC8);
+  My_HAL_GPIO_Init(GPIOC, &initPC9);
+  assert((GPIOC->MODER & (0xF << 16)) == (0x5 << 16)); // Assert GPIO Pin 6 and Pin 7  
+  assert((GPIOC->MODER & (0xF << 12)) == (0x5 << 12)); // Assert GPIO Pin 8 and Pin 9                 
 
-  My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);
-  My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7);
-  //assert((GPIOC->ODR & (1 << 6))); // Assert Output State
+  My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
+  My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_RESET);
+  assert((GPIOC->ODR & (1 << 8))); // Assert Output State
+  assert((GPIOC->ODR | (0 << 9))); // Assert Output State
 
   uint32_t debouncer = 0;
   while (1)
@@ -36,7 +63,7 @@ int main(void)
       
     }
     if (debouncer == 0x7FFFFFFF) {
-      My_HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6 | GPIO_PIN_7);
+      My_HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_8 | GPIO_PIN_9);
     }
     HAL_Delay(1); 
   }
