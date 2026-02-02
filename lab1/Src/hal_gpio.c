@@ -35,9 +35,6 @@ void My_HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
         GPIOx->OSPEEDR &= ~((1 << 1) | (1 << 0));
         GPIOx->PUPDR &= ~(( 1 << 1) | (1 << 0));
         GPIOx->PUPDR |= (1 << 1);
-        if (GPIOx->IDR & 0x0) {
-            printf("Success");
-        }
     }
     else if (GPIOx == GPIOC) 
     {
@@ -69,7 +66,6 @@ void My_HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
         GPIOx->OSPEEDR &= ~((1 << 19) | (1 << 18));
         GPIOx->PUPDR &= ~((1 << 19) | (1 << 18));
     }
-    
 }
 
 
@@ -86,14 +82,19 @@ GPIO_PinState My_HAL_GPIO_ReadPin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 }
 */
 
-/*
 void My_HAL_GPIO_WritePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState)
 {
+    if (PinState == GPIO_PIN_SET) 
+    {
+        GPIOx->ODR |= GPIO_Pin;
+    } else 
+    {
+        GPIOx->ODR &= ~GPIO_Pin;
+    }
 }
-*/
 
-/*
 void My_HAL_GPIO_TogglePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 {
+    GPIOx->ODR ^= GPIO_Pin;
 }
-*/
+

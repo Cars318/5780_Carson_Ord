@@ -2,8 +2,6 @@
 #include "stm32f0xx_hal.h"
 #include "assert.h"
 
-// Test comment to check commit
-
 void SystemClock_Config(void);
 
 /**
@@ -12,32 +10,24 @@ void SystemClock_Config(void);
   */
 int main(void)
 {
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-  /* Configure the system clock */
   SystemClock_Config();
 
-HAL_RCC_GPIOC_CLK_ENABLE(); 
-assert(RCC->AHBENR & RCC_AHBENR_GPIOCEN);
-/*
-GPIO_InitTypeDef initStr = {GPIO_PIN_8 | GPIO_PIN_9,
-                            GPIO_MODE_OUTPUT_PP,
-                            GPIO_SPEED_FREQ_LOW,
-                            GPIO_NOPULL};
-HAL_GPIO_Init(GPIOC, &initStr);
-assert((GPIOC->MODER & (0xF << 16)) == (0x5 << 16)); // Assert GPIO Pin 8 and Pin 9
-*/
-                       
-My_HAL_GPIO_Init(GPIOC);
-My_HAL_GPIO_Init(GPIOA);
+  HAL_RCC_GPIOC_CLK_ENABLE(); 
+  assert(RCC->AHBENR & RCC_AHBENR_GPIOCEN);
 
-HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
-assert((GPIOC->ODR & (1 << 8))); // Assert Output State
+  My_HAL_GPIO_Init(GPIOC);
+  My_HAL_GPIO_Init(GPIOA);
+  assert((GPIOC->MODER & (0xF << 16)) == (0x5 << 16)); // Assert GPIO Pin 8 and Pin 9                 
+
+  My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_SET);
+  My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9);
+  assert((GPIOC->ODR & (1 << 8))); // Assert Output State
 
   while (1)
   {
       HAL_Delay(200);
-      HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_8 | GPIO_PIN_9);
+      My_HAL_GPIO_TogglePin(GPIOC,  GPIO_PIN_8 | GPIO_PIN_9);
       //assert(GPIOC->MODER == 0x123456);
   }
   return -1;
@@ -91,6 +81,15 @@ void Error_Handler(void)
   }
 }
 
+/**
+* @brief Enable AHB peripheral clock register on GPIOC
+*/
+void HAL_RCC_GPIOC_CLK_ENABLE() 
+{
+    RCC->AHBENR |= RCC_AHBENR_GPIOCEN; 
+}
+
+
 #ifdef USE_FULL_ASSERT
 /**
   * @brief  Reports the name of the source file and the source line number
@@ -108,4 +107,7 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* User can add their own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
 }
+
+
+
 #endif /* USE_FULL_ASSERT */
