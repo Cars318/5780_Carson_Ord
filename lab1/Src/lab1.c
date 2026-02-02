@@ -17,8 +17,11 @@ int main(void)
   /* Configure the system clock */
   SystemClock_Config();
 
-__HAL_RCC_GPIOC_CLK_ENABLE();
-assert(RCC->AHBENR & RCC_AHBENR_GPIOCEN); // Assert the Peripheral Clock Enable Register
+HAL_RCC_GPIOC_CLK_ENABLE(); 
+assert(RCC->AHBENR & RCC_AHBENR_GPIOCEN);
+
+//__HAL_RCC_GPIOC_CLK_ENABLE();
+//assert(RCC->AHBENR & RCC_AHBENR_GPIOCEN); // Assert the Peripheral Clock Enable Register
 
 GPIO_InitTypeDef initStr = {GPIO_PIN_8 | GPIO_PIN_9,
                             GPIO_MODE_OUTPUT_PP,
