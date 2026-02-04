@@ -5,6 +5,8 @@
 #include "assert.h"
 #include "hal_gpio.h"
 
+
+
 void SystemClock_Config(void);
 
 /**
@@ -13,6 +15,7 @@ void SystemClock_Config(void);
   */
 int main(void)
 {
+  void EXTI0_1_IRQHandler(void);
   HAL_Init();
   SystemClock_Config();
   HAL_RCC_GPIOC_CLK_ENABLE(); 
@@ -30,7 +33,11 @@ int main(void)
   GPIO_InitTypeDef initPC7 = {GPIO_PIN_7,
                               GPIO_MODE_OUTPUT_PP,
                               GPIO_NOPULL,
-                              GPIO_SPEED_FREQ_LOW};                            
+                              GPIO_SPEED_FREQ_LOW};  
+  GPIO_InitTypeDef initPC8 = {GPIO_PIN_8,
+                              GPIO_MODE_OUTPUT_PP,
+                              GPIO_NOPULL,
+                              GPIO_SPEED_FREQ_LOW,};                                                      
 
   GPIO_InitTypeDef initPC9 = {GPIO_PIN_9,
                             GPIO_MODE_OUTPUT_PP,
@@ -40,11 +47,13 @@ int main(void)
   My_HAL_GPIO_Init(GPIOA, &initPA0);
   My_HAL_GPIO_Init(GPIOC, &initPC6);
   My_HAL_GPIO_Init(GPIOC, &initPC7);
+  My_HAL_GPIO_Init(GPIOC, &initPC8);
   My_HAL_GPIO_Init(GPIOC, &initPC9);
   My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
   My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET);
   My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);
   My_HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7);
+
 
 
   assert(SYSCFG->EXTICR[0] == 0x0);
@@ -54,7 +63,12 @@ int main(void)
   assert(SYSCFG->EXTICR[0] == 0x0);
   assert(EXTI->RTSR == 0x1);
   assert(EXTI->FTSR == 0x0);
- 
+
+  __NVIC_EnableIRQ(EXTI0_1_IRQn);
+  __NVIC_SetPriority(EXTI0_1_IRQn, 1);
+
+
+
 
   while (1)
   {
@@ -115,6 +129,7 @@ void HAL_RCC_SYSCFG_CLK_ENABLE()
 {
   RCC->APB2ENR |= RCC_APB2ENR_SYSCFGCOMPEN;
 }
+
 
 
 /**

@@ -63,3 +63,9 @@ void SysTick_Handler(void)
 /* please refer to the startup file (startup_stm32f0xx.s).                    */
 /******************************************************************************/
 
+void EXTI0_1_IRQHandler(void)
+{
+  My_HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_8);
+  My_HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_9);
+  EXTI->PR |= 0x1;
+} 
