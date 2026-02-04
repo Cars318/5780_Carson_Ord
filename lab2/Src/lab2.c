@@ -1,6 +1,7 @@
 #include "main.h"
 #include "stm32f0xx_hal.h"
 #include <stm32f0xx_hal_gpio.h>
+#include "stm32f0xx_it.h"
 #include "assert.h"
 #include "hal_gpio.h"
 
@@ -19,27 +20,35 @@ int main(void)
   GPIO_InitTypeDef initPC6 = {GPIO_PIN_6,
                               GPIO_MODE_OUTPUT_PP,
                               GPIO_NOPULL,
-                              GPIO_SPEED_FREQ_LOW,};
+                              GPIO_SPEED_FREQ_LOW};
+
+  GPIO_InitTypeDef initPC7 = {GPIO_PIN_7,
+                              GPIO_MODE_OUTPUT_PP,
+                              GPIO_NOPULL,
+                              GPIO_SPEED_FREQ_LOW};                            
 
   GPIO_InitTypeDef initPC9 = {GPIO_PIN_9,
                             GPIO_MODE_OUTPUT_PP,
                             GPIO_NOPULL,
-                            GPIO_SPEED_FREQ_LOW,};
-
+                            GPIO_SPEED_FREQ_LOW};
+ 
+  
   My_HAL_GPIO_Init(GPIOC, &initPC6);
+   My_HAL_GPIO_Init(GPIOC, &initPC7);
   My_HAL_GPIO_Init(GPIOC, &initPC9);
   My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+  My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET);
   My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);
   My_HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7);
+
   while (1)
   {
-    
     My_HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6);
     HAL_Delay(600);
   }
   return -1;
 }
-
+/*
 void My_HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
 {
     uint32_t pos;
@@ -70,7 +79,7 @@ void My_HAL_GPIO_TogglePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
 {
     GPIOx->ODR ^= GPIO_Pin;
 }
-
+*/
 /**
 * @brief Enable AHB peripheral clock register on GPIOC
 */

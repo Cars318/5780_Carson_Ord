@@ -1,6 +1,9 @@
 #include "main.h"
 #include "stm32f0xx_hal.h"
 #include "stm32f0xx_it.h"
+#include "hal_gpio.c"
+
+volatile uint32_t count = 0;
 
 /******************************************************************************/
 /*           Cortex-M0 Processor Interruption and Exception Handlers          */
@@ -44,6 +47,12 @@ void PendSV_Handler(void)
   */
 void SysTick_Handler(void)
 {
+  if (count == 200)
+  {  
+    My_HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7);
+    count = 0;
+  }
+  count++;
   HAL_IncTick();
 }
 
