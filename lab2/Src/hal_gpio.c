@@ -38,3 +38,13 @@ void My_HAL_GPIO_TogglePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
     GPIOx->ODR ^= GPIO_Pin;
 }
 
+void Button_To_EXTI(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+{
+    EXTI->IMR |= 0x1;
+    EXTI->RTSR |= 0x1;
+    EXTI->FTSR &= 0x0;
+    
+    SYSCFG->EXTICR[0] &= ~(0xF);
+    SYSCFG->EXTICR[0] |= 0x0;
+}
+

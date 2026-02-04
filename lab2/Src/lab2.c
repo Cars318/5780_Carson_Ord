@@ -16,6 +16,11 @@ int main(void)
   HAL_Init();
   SystemClock_Config();
   HAL_RCC_GPIOC_CLK_ENABLE(); 
+  HAL_RCC_SYSCFG_CLK_ENABLE();
+ GPIO_InitTypeDef initPA0 = {GPIO_PIN_0,
+                              GPIO_MODE_INPUT,
+                              GPIO_PULLDOWN,
+                              GPIO_SPEED_FREQ_LOW,}; 
 
   GPIO_InitTypeDef initPC6 = {GPIO_PIN_6,
                               GPIO_MODE_OUTPUT_PP,
@@ -32,14 +37,24 @@ int main(void)
                             GPIO_NOPULL,
                             GPIO_SPEED_FREQ_LOW};
  
-  
+  My_HAL_GPIO_Init(GPIOA, &initPA0);
   My_HAL_GPIO_Init(GPIOC, &initPC6);
-   My_HAL_GPIO_Init(GPIOC, &initPC7);
+  My_HAL_GPIO_Init(GPIOC, &initPC7);
   My_HAL_GPIO_Init(GPIOC, &initPC9);
   My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
   My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET);
   My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);
   My_HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7);
+
+
+  assert(SYSCFG->EXTICR[0] == 0x0);
+  assert(EXTI->RTSR == 0x0);
+  assert(EXTI->FTSR == 0x0);
+  Button_To_EXTI(GPIOA, GPIO_PIN_0);
+  assert(SYSCFG->EXTICR[0] == 0x0);
+  assert(EXTI->RTSR == 0x1);
+  assert(EXTI->FTSR == 0x0);
+ 
 
   while (1)
   {
@@ -94,6 +109,11 @@ void HAL_RCC_GPIOC_CLK_ENABLE()
 void HAL_RCC_GPIOA_CLK_ENABLE() 
 {
     RCC->AHBENR |= RCC_AHBENR_GPIOAEN; 
+}
+
+void HAL_RCC_SYSCFG_CLK_ENABLE()
+{
+  RCC->APB2ENR |= RCC_APB2ENR_SYSCFGCOMPEN;
 }
 
 
