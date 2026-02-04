@@ -65,9 +65,9 @@ int main(void)
   assert(EXTI->FTSR == 0x0);
 
   __NVIC_EnableIRQ(SysTick_IRQn);
-  __NVIC_SetPriority(SysTick_IRQn, 0);
+  __NVIC_SetPriority(SysTick_IRQn, 2);
   __NVIC_EnableIRQ(EXTI0_1_IRQn);
-  __NVIC_SetPriority(EXTI0_1_IRQn, 3);
+  __NVIC_SetPriority(EXTI0_1_IRQn, 1);
 
   while (1)
   {
@@ -76,38 +76,7 @@ int main(void)
   }
   return -1;
 }
-/*
-void My_HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
-{
-    uint32_t pos;
-    for (pos = 0; pos < 16; pos++) {
-        if ((GPIO_Init->Pin) & (1 << pos)) {
-            GPIOx->MODER &= ~(0x3 << (pos * 2));
-            GPIOx->MODER |= (GPIO_Init->Mode << (pos * 2));
-            GPIOx->OSPEEDR &= ~(0x3 << (pos * 2));
-            GPIOx->OSPEEDR |= (GPIO_Init->Speed << (pos * 2));
-            GPIOx->PUPDR &= ~(0x3 << (pos * 2));
-            GPIOx->PUPDR |= (GPIO_Init->Pull << (pos * 2));
-        }
-    }
-}
 
-void My_HAL_GPIO_WritePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState)
-{
-    if (PinState == GPIO_PIN_SET) 
-    {
-        GPIOx->ODR |= GPIO_Pin;
-    } else 
-    {
-        GPIOx->ODR &= ~GPIO_Pin;
-    }
-}
-
-void My_HAL_GPIO_TogglePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
-{
-    GPIOx->ODR ^= GPIO_Pin;
-}
-*/
 /**
 * @brief Enable AHB peripheral clock register on GPIOC
 */
