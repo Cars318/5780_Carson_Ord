@@ -4,6 +4,7 @@
 #include "hal_gpio.c"
 
 volatile uint32_t count = 0;
+volatile uint32_t handlerCount = 0;
 
 /******************************************************************************/
 /*           Cortex-M0 Processor Interruption and Exception Handlers          */
@@ -49,10 +50,11 @@ void SysTick_Handler(void)
 {
   if (count == 200)
   {  
-    My_HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7);
-    count = 0;
+   My_HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7);
+   count = 0;
   }
   count++;
+  
   HAL_IncTick();
 }
 
@@ -65,7 +67,12 @@ void SysTick_Handler(void)
 
 void EXTI0_1_IRQHandler(void)
 {
-  My_HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_8);
-  My_HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_9);
-  EXTI->PR |= 0x1;
+  EXTI->PR |= (1 << 0);
+  My_HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_8 | GPIO_PIN_9);
+  
+  for (handlerCount = 0; handlerCount < 1000000; handlerCount++) {}
+
+   My_HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_8 | GPIO_PIN_9);
+
+  EXTI->PR |= (1 << 0);
 } 

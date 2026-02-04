@@ -50,11 +50,11 @@ int main(void)
   My_HAL_GPIO_Init(GPIOC, &initPC8);
   My_HAL_GPIO_Init(GPIOC, &initPC9);
   My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
-  My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET);
   My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);
+  My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_7, GPIO_PIN_SET);
+  My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_8, GPIO_PIN_RESET);
+  
   My_HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7);
-
-
 
   assert(SYSCFG->EXTICR[0] == 0x0);
   assert(EXTI->RTSR == 0x0);
@@ -64,11 +64,10 @@ int main(void)
   assert(EXTI->RTSR == 0x1);
   assert(EXTI->FTSR == 0x0);
 
+  __NVIC_EnableIRQ(SysTick_IRQn);
+  __NVIC_SetPriority(SysTick_IRQn, 0);
   __NVIC_EnableIRQ(EXTI0_1_IRQn);
-  __NVIC_SetPriority(EXTI0_1_IRQn, 1);
-
-
-
+  __NVIC_SetPriority(EXTI0_1_IRQn, 3);
 
   while (1)
   {
