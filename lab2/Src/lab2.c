@@ -1,5 +1,8 @@
 #include "main.h"
 #include "stm32f0xx_hal.h"
+#include <stm32f0xx_hal_gpio.h>
+#include "assert.h"
+#include "hal_gpio.h"
 
 void SystemClock_Config(void);
 
@@ -9,17 +12,81 @@ void SystemClock_Config(void);
   */
 int main(void)
 {
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
   HAL_Init();
-  /* Configure the system clock */
   SystemClock_Config();
+  HAL_RCC_GPIOC_CLK_ENABLE(); 
 
+  GPIO_InitTypeDef initPC6 = {GPIO_PIN_6,
+                              GPIO_MODE_OUTPUT_PP,
+                              GPIO_NOPULL,
+                              GPIO_SPEED_FREQ_LOW,};
+
+  GPIO_InitTypeDef initPC9 = {GPIO_PIN_9,
+                            GPIO_MODE_OUTPUT_PP,
+                            GPIO_NOPULL,
+                            GPIO_SPEED_FREQ_LOW,};
+
+  My_HAL_GPIO_Init(GPIOC, &initPC6);
+  My_HAL_GPIO_Init(GPIOC, &initPC9);
+  My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_9, GPIO_PIN_SET);
+  My_HAL_GPIO_WritePin(GPIOC, GPIO_PIN_6, GPIO_PIN_SET);
+  My_HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_7);
   while (1)
   {
- 
+    
+    My_HAL_GPIO_TogglePin(GPIOC, GPIO_PIN_6);
+    HAL_Delay(600);
   }
   return -1;
 }
+
+void My_HAL_GPIO_Init(GPIO_TypeDef  *GPIOx, GPIO_InitTypeDef *GPIO_Init)
+{
+    uint32_t pos;
+    for (pos = 0; pos < 16; pos++) {
+        if ((GPIO_Init->Pin) & (1 << pos)) {
+            GPIOx->MODER &= ~(0x3 << (pos * 2));
+            GPIOx->MODER |= (GPIO_Init->Mode << (pos * 2));
+            GPIOx->OSPEEDR &= ~(0x3 << (pos * 2));
+            GPIOx->OSPEEDR |= (GPIO_Init->Speed << (pos * 2));
+            GPIOx->PUPDR &= ~(0x3 << (pos * 2));
+            GPIOx->PUPDR |= (GPIO_Init->Pull << (pos * 2));
+        }
+    }
+}
+
+void My_HAL_GPIO_WritePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin, GPIO_PinState PinState)
+{
+    if (PinState == GPIO_PIN_SET) 
+    {
+        GPIOx->ODR |= GPIO_Pin;
+    } else 
+    {
+        GPIOx->ODR &= ~GPIO_Pin;
+    }
+}
+
+void My_HAL_GPIO_TogglePin(GPIO_TypeDef* GPIOx, uint16_t GPIO_Pin)
+{
+    GPIOx->ODR ^= GPIO_Pin;
+}
+
+/**
+* @brief Enable AHB peripheral clock register on GPIOC
+*/
+void HAL_RCC_GPIOC_CLK_ENABLE() 
+{
+    RCC->AHBENR |= RCC_AHBENR_GPIOCEN; 
+}
+
+/**
+* @brief Enable AHB peripheral clock register on GPIOA
+*/
+void HAL_RCC_GPIOA_CLK_ENABLE() 
+{
+    RCC->AHBENR |= RCC_AHBENR_GPIOAEN; 
+}
+
 
 /**
   * @brief System Clock Configuration
@@ -82,4 +149,8 @@ void assert_failed(uint8_t *file, uint32_t line)
   /* User can add their own implementation to report the file name and line number,
      ex: printf("Wrong parameters value: file %s on line %d\r\n", file, line) */
 }
+
+
+
+
 #endif /* USE_FULL_ASSERT */
